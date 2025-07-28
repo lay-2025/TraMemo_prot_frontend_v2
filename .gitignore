@@ -28,5 +28,6 @@ dist-ssr
 .env.production
 
 # 設計書
+/設計書/
 /設計書/personal/*
 /設計書/backup/*

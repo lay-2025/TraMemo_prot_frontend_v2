@@ -5,6 +5,7 @@ import Footer from "@/components/footer";
 import "./App.css";
 import HomePage from "@/pages/HomePage";
 import TravelDetailPage from "./pages/travel/TravelDetailPage";
+import TravelListPage from "./pages/travel/TravelListPage";
 import CreateTravelPage from "./pages/travel/TravelCreatePage";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
@@ -38,6 +39,7 @@ function App() {
               <Route path="/auth/login" element={<LoginPage />} />
               <Route path="/auth/register" element={<RegisterPage />} />
               {/* <Route path="/profile" element={<ProfilePage />} /> */}
+              <Route path="/travels" element={<TravelListPage />} />
               <Route path="/travelCreate" element={<CreateTravelPage />} />
               <Route path="/travels/:id" element={<TravelDetailPage />} />
               {/* <Route path="/map" element={<MapPage />} /> */}
