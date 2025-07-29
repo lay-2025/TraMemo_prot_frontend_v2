@@ -215,34 +215,54 @@ function filterAndSortTravels(
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 12;
 
+// 環境変数でモックAPIの使用を切り替える
+const USE_MOCK_API =  false;
+
 // 旅行記録一覧取得API
 export async function getTravelList(
   params: TravelSearchFilterParams = {}
 ): Promise<TravelListResponse> {
-  // モックデータを使用
-  const filteredData = filterAndSortTravels(MOCK_TRAVEL_DATA, params);
-  
-  // ページネーション
-  const page = params.page || DEFAULT_PAGE;
-  const limit = params.limit || DEFAULT_LIMIT;
-  const startIndex = (page - 1) * limit;
-  const endIndex = startIndex + limit;
-  const paginatedData = filteredData.slice(startIndex, endIndex);
+  if (USE_MOCK_API) {
+    // モックデータを使用
+    const filteredData = filterAndSortTravels(MOCK_TRAVEL_DATA, params);
 
-  // 実際のAPI呼び出しの場合は以下のようになります
-  // const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/travels?${new URLSearchParams(params as any)}`);
-  // if (!response.ok) throw new Error("旅行記録の取得に失敗しました");
-  // return await response.json();
+    // ページネーション
+    const page = params.page || DEFAULT_PAGE;
+    const limit = params.limit || DEFAULT_LIMIT;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedData = filteredData.slice(startIndex, endIndex);
 
-  return {
-    data: paginatedData,
-    meta: {
-      current_page: page,
-      last_page: Math.ceil(filteredData.length / limit),
-      per_page: limit,
-      total: filteredData.length,
-    },
-  };
+    return {
+      data: paginatedData,
+      meta: {
+        current_page: page,
+        last_page: Math.ceil(filteredData.length / limit),
+        per_page: limit,
+        total: filteredData.length,
+      },
+    };
+  } else {
+    const queryParams = new URLSearchParams();
+    for (const key in params) {
+      const value = params[key as keyof TravelSearchFilterParams];
+      if (value !== undefined && value !== null && value !== '') {
+        if (Array.isArray(value)) {
+          value.forEach(item => queryParams.append(key, item.toString()));
+        } else {
+          queryParams.append(key, value.toString());
+        }
+      }
+    }
+
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/travels?${queryParams.toString()}`);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || "旅行記録の取得に失敗しました");
+    }
+    const data = await response.json();
+    return data as TravelListResponse;
+  }
 }
 
 // 検索API（将来的に実装）
