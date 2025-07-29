@@ -211,6 +211,10 @@ function filterAndSortTravels(
   return filtered;
 }
 
+// デフォルト値の統一
+const DEFAULT_PAGE = 1;
+const DEFAULT_LIMIT = 12;
+
 // 旅行記録一覧取得API
 export async function getTravelList(
   params: TravelSearchFilterParams = {}
@@ -219,8 +223,8 @@ export async function getTravelList(
   const filteredData = filterAndSortTravels(MOCK_TRAVEL_DATA, params);
   
   // ページネーション
-  const page = params.page || 1;
-  const limit = params.limit || 20;
+  const page = params.page || DEFAULT_PAGE;
+  const limit = params.limit || DEFAULT_LIMIT;
   const startIndex = (page - 1) * limit;
   const endIndex = startIndex + limit;
   const paginatedData = filteredData.slice(startIndex, endIndex);

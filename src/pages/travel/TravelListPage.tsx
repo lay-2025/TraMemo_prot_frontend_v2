@@ -35,6 +35,10 @@ import {
 } from "@/types/travel";
 import { LOCATION_CATEGORIES, LOCATION_CATEGORY } from "@/constants/location";
 
+// デフォルト値の統一
+const DEFAULT_PAGE = 1;
+const DEFAULT_LIMIT = 12;
+
 export default function TravelListPage() {
   // 状態管理
   const [travels, setTravels] = useState<TravelListItem[]>([]);
@@ -47,13 +51,13 @@ export default function TravelListPage() {
     locationCategory: "all" as string,
     sortBy: "created_at" as string,
     sortOrder: "desc" as "asc" | "desc",
-    limit: 12,
+    limit: DEFAULT_LIMIT,
   });
 
   // 実際のAPIリクエスト用パラメータ
   const [searchParams, setSearchParams] = useState<TravelSearchFilterParams>({
-    page: 1,
-    limit: 12,
+    page: DEFAULT_PAGE,
+    limit: DEFAULT_LIMIT,
     sortBy: "created_at",
     sortOrder: "desc",
   });
@@ -108,7 +112,7 @@ export default function TravelListPage() {
   // 検索実行ボタン
   const handleSearchExecute = () => {
     const newSearchParams: TravelSearchFilterParams = {
-      page: 1,
+      page: DEFAULT_PAGE,
       limit: searchForm.limit,
       sortBy: searchForm.sortBy as any,
       sortOrder: searchForm.sortOrder,
