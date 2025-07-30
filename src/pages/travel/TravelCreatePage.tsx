@@ -224,12 +224,12 @@ export default function CreateTravelPage() {
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold">新しい旅行記録を作成</h1>
           <div className="flex gap-2">
-            {/* 下書き保存機能は一旦保留 */}
+            {/* TODO:下書き保存機能は一旦保留 */}
             {/* 下書き保存するならば、下書き保存フラグのカラム追加と編集機能があればいけるか？ */}
-            <Button variant="outline" onClick={() => handleSubmit(true)}>
+            {/* <Button variant="outline" onClick={() => handleSubmit(true)}>
               <Save className="h-4 w-4 mr-2" />
               下書き保存
-            </Button>
+            </Button> */}
             <Button
               onClick={() => handleSubmit(false)}
               disabled={
@@ -516,303 +516,274 @@ export default function CreateTravelPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                {/* リストにまとめて、地図ボタンを押した場合に地図で場所を選択し緯度経度を送信できるようにする */}
-                {/* ただし、地図関連は後ほど実装 */}
-                <Tabs defaultValue="list" className="space-y-4">
-                  <TabsList>
-                    <TabsTrigger value="list">リスト</TabsTrigger>
-                    <TabsTrigger value="map">地図</TabsTrigger>
-                  </TabsList>
-
-                  {/* 場所名・訪問順・訪問日・訪問時間・説明の順でフォーム入力できるようにする */}
-                  {/* 訪問順はデフォルトでは「場所を追加」ボタンを押した順に1からインクリメントするように設定 */}
-                  <TabsContent value="list" className="space-y-4">
-                    {locations.length === 0 ? (
-                      <div className="text-center py-8 text-muted-foreground">
-                        <MapPin className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                        <p>まだ訪問地が追加されていません</p>
-                        <p className="text-sm">
-                          「場所を追加」ボタンから追加してください
-                        </p>
+                {locations.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <MapPin className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>まだ訪問地が追加されていません</p>
+                    <p className="text-sm">
+                      「場所を追加」ボタンから追加してください
+                    </p>
+                  </div>
+                ) : (
+                  locations.map((location, index) => (
+                    <Card key={location.id} className="p-4">
+                      <div className="flex items-start justify-between mb-4">
+                        <h4 className="font-medium">訪問場所 {index + 1}</h4>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveLocation(location.id)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
                       </div>
-                    ) : (
-                      locations.map((location, index) => (
-                        <Card key={location.id} className="p-4">
-                          <div className="flex items-start justify-between mb-4">
-                            <h4 className="font-medium">
-                              訪問場所 {index + 1}
-                            </h4>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleRemoveLocation(location.id)}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
 
-                          {/* 場所名と訪問順を横並び */}
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                              <label className="block text-sm font-medium mb-2">
-                                旅程タイトル{" "}
-                                <span className="text-red-500">*</span>
-                              </label>
-                              <Input
-                                placeholder="旅程リストのタイトルを入力（清水寺参拝、旅館チェックインなど）"
-                                value={location.name}
-                                onChange={(e) =>
-                                  handleUpdateLocation(location.id, {
-                                    name: e.target.value,
-                                  })
-                                }
-                              />
-                              {formErrors[`location_name_${index}`] && (
-                                <div className="text-red-500 text-xs mt-1">
-                                  {formErrors[`location_name_${index}`]}
-                                </div>
-                              )}
+                      {/* 場所名と訪問順を横並び */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <label className="block text-sm font-medium mb-2">
+                            旅程タイトル <span className="text-red-500">*</span>
+                          </label>
+                          <Input
+                            placeholder="旅程リストのタイトルを入力（清水寺参拝、旅館チェックインなど）"
+                            value={location.name}
+                            onChange={(e) =>
+                              handleUpdateLocation(location.id, {
+                                name: e.target.value,
+                              })
+                            }
+                          />
+                          {formErrors[`location_name_${index}`] && (
+                            <div className="text-red-500 text-xs mt-1">
+                              {formErrors[`location_name_${index}`]}
                             </div>
-                            <div>
-                              <label className="block text-sm font-medium mb-2">
-                                訪問順 <span className="text-red-500">*</span>
-                              </label>
-                              <Input
-                                type="number"
-                                min={1}
-                                value={
-                                  typeof location.order === "number"
-                                    ? location.order
-                                    : index + 1
-                                }
-                                onChange={(e) =>
-                                  handleUpdateLocation(location.id, {
-                                    order: Number(e.target.value),
-                                  })
-                                }
-                              />
-                              {formErrors[`location_order_${index}`] && (
-                                <div className="text-red-500 text-xs mt-1">
-                                  {formErrors[`location_order_${index}`]}
-                                </div>
-                              )}
+                          )}
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium mb-2">
+                            訪問順 <span className="text-red-500">*</span>
+                          </label>
+                          <Input
+                            type="number"
+                            min={1}
+                            value={
+                              typeof location.order === "number"
+                                ? location.order
+                                : index + 1
+                            }
+                            onChange={(e) =>
+                              handleUpdateLocation(location.id, {
+                                order: Number(e.target.value),
+                              })
+                            }
+                          />
+                          {formErrors[`location_order_${index}`] && (
+                            <div className="text-red-500 text-xs mt-1">
+                              {formErrors[`location_order_${index}`]}
                             </div>
-                          </div>
+                          )}
+                        </div>
+                      </div>
 
-                          {/* 訪問日と訪問時間を横並び */}
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                              <label className="block text-sm font-medium mb-2">
-                                訪問日 <span className="text-red-500">*</span>
-                              </label>
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <Button
-                                    variant="outline"
-                                    className="w-full justify-start"
-                                  >
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {location.visitDate
-                                      ? format(location.visitDate, "PPP", {
-                                          locale: ja,
-                                        })
-                                      : "日付を選択"}
-                                  </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0">
-                                  <Calendar
-                                    mode="single"
-                                    selected={location.visitDate ?? undefined}
-                                    onSelect={(date) =>
-                                      handleUpdateLocation(location.id, {
-                                        visitDate: date ?? null,
-                                      })
-                                    }
-                                    initialFocus
-                                  />
-                                </PopoverContent>
-                              </Popover>
-                              {formErrors[`location_visitDate_${index}`] && (
-                                <div className="text-red-500 text-xs mt-1">
-                                  {formErrors[`location_visitDate_${index}`]}
-                                </div>
-                              )}
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium mb-2">
-                                訪問時間
-                              </label>
-                              <Input
-                                type="time"
-                                value={location.visitTime || ""}
-                                onChange={(e) =>
-                                  handleUpdateLocation(location.id, {
-                                    visitTime: e.target.value,
-                                  })
-                                }
-                              />
-                            </div>
-                          </div>
-
-                          {/* 説明 */}
-                          <div>
-                            <label className="block text-sm font-medium mb-2">
-                              説明
-                            </label>
-                            <Textarea
-                              placeholder="この場所での体験や感想を入力"
-                              rows={2}
-                              value={location.description}
-                              onChange={(e) =>
-                                handleUpdateLocation(location.id, {
-                                  description: e.target.value,
-                                })
-                              }
-                            />
-                            <div className="mt-2 flex items-center gap-2">
-                              <span
-                                className={
-                                  location.lat && location.lng
-                                    ? "text-red-500 font-semibold"
-                                    : "text-black"
-                                }
-                              >
-                                {location.lat && location.lng
-                                  ? "場所の指定済み"
-                                  : "場所の指定無し"}
-                              </span>
+                      {/* 訪問日と訪問時間を横並び */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <label className="block text-sm font-medium mb-2">
+                            訪問日 <span className="text-red-500">*</span>
+                          </label>
+                          <Popover>
+                            <PopoverTrigger asChild>
                               <Button
                                 variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                  setMapOpenIndex(location.id);
+                                className="w-full justify-start"
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {location.visitDate
+                                  ? format(location.visitDate, "PPP", {
+                                      locale: ja,
+                                    })
+                                  : "日付を選択"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0">
+                              <Calendar
+                                mode="single"
+                                selected={location.visitDate ?? undefined}
+                                onSelect={(date) =>
+                                  handleUpdateLocation(location.id, {
+                                    visitDate: date ?? null,
+                                  })
+                                }
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          {formErrors[`location_visitDate_${index}`] && (
+                            <div className="text-red-500 text-xs mt-1">
+                              {formErrors[`location_visitDate_${index}`]}
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium mb-2">
+                            訪問時間
+                          </label>
+                          <Input
+                            type="time"
+                            value={location.visitTime || ""}
+                            onChange={(e) =>
+                              handleUpdateLocation(location.id, {
+                                visitTime: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      {/* 説明 */}
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          説明
+                        </label>
+                        <Textarea
+                          placeholder="この場所での体験や感想を入力"
+                          rows={2}
+                          value={location.description}
+                          onChange={(e) =>
+                            handleUpdateLocation(location.id, {
+                              description: e.target.value,
+                            })
+                          }
+                        />
+                        <div className="mt-2 flex items-center gap-2">
+                          <span
+                            className={
+                              location.lat && location.lng
+                                ? "text-red-500 font-semibold"
+                                : "text-black"
+                            }
+                          >
+                            {location.lat && location.lng
+                              ? "場所の指定済み"
+                              : "場所の指定無し"}
+                          </span>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setMapOpenIndex(location.id);
+                              setTempLatLng((prev) => ({
+                                ...prev,
+                                [location.id]:
+                                  location.lat && location.lng
+                                    ? {
+                                        lat: location.lat,
+                                        lng: location.lng,
+                                      }
+                                    : null,
+                              }));
+                            }}
+                          >
+                            地図で場所を選ぶ
+                          </Button>
+                        </div>
+                        <Sheet
+                          open={mapOpenIndex === location.id}
+                          onOpenChange={(open) =>
+                            !open && setMapOpenIndex(null)
+                          }
+                        >
+                          <SheetContent
+                            side="bottom"
+                            className="max-w-2xl mx-auto"
+                          >
+                            <SheetHeader>
+                              <SheetTitle>地図で訪問地を選択</SheetTitle>
+                            </SheetHeader>
+                            <div className="mt-4 space-y-4">
+                              {/* 選択済みラベルと座標 */}
+                              <div className="mb-2">
+                                {tempLatLng[location.id] ? (
+                                  <span className="text-green-600 font-semibold">
+                                    選択済み: 緯度{" "}
+                                    {tempLatLng[location.id]?.lat.toFixed(6)},
+                                    経度{" "}
+                                    {tempLatLng[location.id]?.lng.toFixed(6)}
+                                  </span>
+                                ) : (
+                                  <span className="text-gray-500">未選択</span>
+                                )}
+                              </div>
+                              <MapComponent
+                                initialPrefecture={
+                                  formData.locationCategory ===
+                                  LOCATION_CATEGORY.DOMESTIC
+                                    ? getPrefectureNameForMap(
+                                        formData.prefecture
+                                      )
+                                    : undefined
+                                }
+                                initialCountry={
+                                  formData.locationCategory ===
+                                  LOCATION_CATEGORY.OVERSEAS
+                                    ? getCountryNameForMap(formData.country)
+                                    : undefined
+                                }
+                                markerLatLng={
+                                  tempLatLng[location.id] ?? undefined
+                                }
+                                onMarkerChange={(lat, lng) =>
                                   setTempLatLng((prev) => ({
                                     ...prev,
-                                    [location.id]:
-                                      location.lat && location.lng
-                                        ? {
-                                            lat: location.lat,
-                                            lng: location.lng,
-                                          }
-                                        : null,
-                                  }));
-                                }}
-                              >
-                                地図で場所を選ぶ
-                              </Button>
+                                    [location.id]: { lat, lng },
+                                  }))
+                                }
+                                enableSearch={true}
+                              />
+                              <div className="flex gap-2 justify-end">
+                                <Button
+                                  variant="secondary"
+                                  onClick={() =>
+                                    setTempLatLng((prev) => ({
+                                      ...prev,
+                                      [location.id]: null,
+                                    }))
+                                  }
+                                >
+                                  リセット
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  onClick={() => setMapOpenIndex(null)}
+                                >
+                                  キャンセル
+                                </Button>
+                                <Button
+                                  onClick={() => {
+                                    if (tempLatLng[location.id]) {
+                                      handleUpdateLocation(location.id, {
+                                        lat: tempLatLng[location.id]!.lat,
+                                        lng: tempLatLng[location.id]!.lng,
+                                      });
+                                    } else {
+                                      handleUpdateLocation(location.id, {
+                                        lat: undefined,
+                                        lng: undefined,
+                                      });
+                                    }
+                                    setMapOpenIndex(null);
+                                  }}
+                                >
+                                  この場所に決定
+                                </Button>
+                              </div>
                             </div>
-                            <Sheet
-                              open={mapOpenIndex === location.id}
-                              onOpenChange={(open) =>
-                                !open && setMapOpenIndex(null)
-                              }
-                            >
-                              <SheetContent
-                                side="bottom"
-                                className="max-w-2xl mx-auto"
-                              >
-                                <SheetHeader>
-                                  <SheetTitle>地図で訪問地を選択</SheetTitle>
-                                </SheetHeader>
-                                <div className="mt-4 space-y-4">
-                                  {/* 選択済みラベルと座標 */}
-                                  <div className="mb-2">
-                                    {tempLatLng[location.id] ? (
-                                      <span className="text-green-600 font-semibold">
-                                        選択済み: 緯度{" "}
-                                        {tempLatLng[location.id]?.lat.toFixed(
-                                          6
-                                        )}
-                                        , 経度{" "}
-                                        {tempLatLng[location.id]?.lng.toFixed(
-                                          6
-                                        )}
-                                      </span>
-                                    ) : (
-                                      <span className="text-gray-500">
-                                        未選択
-                                      </span>
-                                    )}
-                                  </div>
-                                  <MapComponent
-                                    initialPrefecture={
-                                      formData.locationCategory ===
-                                      LOCATION_CATEGORY.DOMESTIC
-                                        ? getPrefectureNameForMap(
-                                            formData.prefecture
-                                          )
-                                        : undefined
-                                    }
-                                    initialCountry={
-                                      formData.locationCategory ===
-                                      LOCATION_CATEGORY.OVERSEAS
-                                        ? getCountryNameForMap(formData.country)
-                                        : undefined
-                                    }
-                                    markerLatLng={
-                                      tempLatLng[location.id] ?? undefined
-                                    }
-                                    onMarkerChange={(lat, lng) =>
-                                      setTempLatLng((prev) => ({
-                                        ...prev,
-                                        [location.id]: { lat, lng },
-                                      }))
-                                    }
-                                    enableSearch={true}
-                                  />
-                                  <div className="flex gap-2 justify-end">
-                                    <Button
-                                      variant="secondary"
-                                      onClick={() =>
-                                        setTempLatLng((prev) => ({
-                                          ...prev,
-                                          [location.id]: null,
-                                        }))
-                                      }
-                                    >
-                                      リセット
-                                    </Button>
-                                    <Button
-                                      variant="outline"
-                                      onClick={() => setMapOpenIndex(null)}
-                                    >
-                                      キャンセル
-                                    </Button>
-                                    <Button
-                                      onClick={() => {
-                                        if (tempLatLng[location.id]) {
-                                          handleUpdateLocation(location.id, {
-                                            lat: tempLatLng[location.id]!.lat,
-                                            lng: tempLatLng[location.id]!.lng,
-                                          });
-                                        } else {
-                                          handleUpdateLocation(location.id, {
-                                            lat: undefined,
-                                            lng: undefined,
-                                          });
-                                        }
-                                        setMapOpenIndex(null);
-                                      }}
-                                    >
-                                      この場所に決定
-                                    </Button>
-                                  </div>
-                                </div>
-                              </SheetContent>
-                            </Sheet>
-                          </div>
-                        </Card>
-                      ))
-                    )}
-                  </TabsContent>
-
-                  <TabsContent value="map">
-                    <div className="h-[400px] rounded-lg overflow-hidden border">
-                      {/* 後ほど実装 */}
-                      {/* <MapComponent locations={locations} /> */}
-                    </div>
-                  </TabsContent>
-                </Tabs>
+                          </SheetContent>
+                        </Sheet>
+                      </div>
+                    </Card>
+                  ))
+                )}
               </CardContent>
             </Card>
 
