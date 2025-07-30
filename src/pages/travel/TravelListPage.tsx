@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -23,8 +22,6 @@ import {
   MessageCircle,
   MapPin,
   Calendar,
-  Eye,
-  EyeOff,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getTravelList, TravelListResponse } from "@/api/travel/getListApi";
