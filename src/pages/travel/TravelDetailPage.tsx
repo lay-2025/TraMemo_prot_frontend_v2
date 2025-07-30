@@ -6,7 +6,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Heart, Share2, Bookmark, MapPin, Calendar, Clock } from "lucide-react";
+import {
+  Heart,
+  Share2,
+  Bookmark,
+  MapPin,
+  Calendar,
+  Clock,
+  Sparkles,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { getTravelDetail, TravelDetail } from "@/api/travel/getDetailApi";
 import { TravelRouteMap } from "@/components/map/TravelRouteMap";
@@ -269,24 +277,76 @@ export default function TravelDetailPage() {
           </Card>
 
           {/* 訪問地リスト */}
-          {/* この部分をAIによるPickUp情報の表示場所に使ってもよいかも */}
-          {/* 投稿を読んで、金閣寺に訪問しているなら金閣寺についての説明やトリビアなどを表示するようなイメージ */}
-          <Card>
+          {/* <Card>
             <CardContent className="pt-6">
               <h3 className="font-semibold mb-4">訪問地</h3>
-              <ul className="space-y-3">
-                {travelData.locations.map((location, index) => (
-                  <li
-                    key={index}
-                    className="border-b pb-3 last:border-0 last:pb-0"
-                  >
-                    <div className="font-medium">{location.name}</div>
-                    <p className="text-sm text-muted-foreground">
-                      {location.description}
-                    </p>
-                  </li>
-                ))}
-              </ul>
+              {travelData.locations.length > 0 ? (
+                <Accordion type="single" collapsible className="w-full">
+                  {travelData.locations.map((location, index) => (
+                    <AccordionItem key={index} value={`item-${index}`}>
+                      <AccordionTrigger>
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-medium">{location.name}</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <p className="text-sm text-muted-foreground">
+                          {location.description || "説明はありません。"}
+                        </p>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  訪問地の情報はありません。
+                </p>
+              )}
+            </CardContent>
+          </Card> */}
+
+          {/* TODO: AIによるPickUp情報（プレースホルダー） */}
+          <Card className="mt-6">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Sparkles className="h-5 w-5 text-purple-600" />
+                <h3 className="font-semibold">AIによる旅行先のおすすめ情報</h3>
+                <Badge variant="secondary" className="text-xs">
+                  近日公開
+                </Badge>
+              </div>
+              <div className="space-y-4">
+                <div className="p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-100">
+                  <h4 className="font-medium text-purple-800 mb-2">
+                    ✨ この旅行記録から抽出された情報
+                  </h4>
+                  <p className="text-sm text-purple-700">
+                    旅行記録の内容に基づいて、関連する観光スポットの情報やトリビア、おすすめのアクティビティなどがここに表示される予定です。
+                  </p>
+                </div>
+                <div className="p-4 bg-gradient-to-r from-green-50 to-teal-50 rounded-lg border border-green-100">
+                  <h4 className="font-medium text-green-800 mb-2">
+                    🎯 パーソナライズされたおすすめ
+                  </h4>
+                  <p className="text-sm text-green-700">
+                    あなたの旅行スタイルや好みに合わせて、次回の旅行プランや関連する旅行記録をおすすめします。
+                  </p>
+                </div>
+                <div className="p-4 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg border border-orange-100">
+                  <h4 className="font-medium text-orange-800 mb-2">
+                    💡 旅行の豆知識
+                  </h4>
+                  <p className="text-sm text-orange-700">
+                    訪問地に関する歴史的な背景や、現地の人々の生活文化など、より深い理解を提供します。
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <p className="text-xs text-muted-foreground text-center">
+                  AI機能は現在開発中です。より豊かな旅行体験を提供するため、鋭意開発を進めています。
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>
